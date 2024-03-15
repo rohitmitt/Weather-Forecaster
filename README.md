@@ -10,12 +10,13 @@ Developer – Nolan Willett – ID: 3946-9097
 Can a statistical model effectively use historical weather data to accurately forecast weather conditions? This project aims to develop a predictive model using historical weather data to forecast temperature and precipitation. An accurate forecast allows a variety of industries to make informed decisions, mitigate risks, and optimize operations.
 
 ## Dataset Description: 
-Our dataset is sourced from the Florida Climate Center at Florida State University and provides approximately 65 years of mean temperature (Fahrenheit) and precipitation (inches) data from Gainesville Regional Airport.
+Our dataset is sourced from the Florida Climate Center at Florida State University and provides approximately 65 years of mean temperature (Fahrenheit) and precipitation (inches) data from Gainesville Regional Airport [1].
 
 ## Evaluation Metric:
 We will partition the data into training (70%), validation (15%), and testing (15%) sets. We will use metrics like Mean Absolute Error (MAE), Root Mean Square Error (RMSE), and correlation coefficient to compare model predictions with historical observations across all metrics. This approach ensures a thorough evaluation of our model's accuracy and reliability in forecasting weather patterns.
-Baseline Techniques: Weather forecasting commonly uses statistical models to analyze time-series nature of weather data. Weather data exhibits seasonal trends. Seasonality is where trends repeat over a period of time within a given year; hence the four seasons summer, fall, winter, spring. Recent papers involving predicting rainfall, temperature or other weather patterns have used time series decomposition techniques to isolate trend-cycle, seasonal, and remainder components [1]. A common method uses “Seasonal and Trend decomposition using LOESS” (STL) [2, 3]. Traditional forecasting models like autoregressive integrated moving average (ARIMA) have proven successful for modeling weather patterns 
-[3,4]. More recently, machine learning approaches using neural networks are increasingly explored. RNNs [4], and even GNNs [6], offer the potential to model complex dependencies and noise in weather data.
+
+## Baseline Techniques: 
+Weather forecasting commonly uses statistical models to analyze time-series nature of weather data. Weather data exhibits seasonal trends. Seasonality is where trends repeat over a period of time within a given year; hence the four seasons summer, fall, winter, spring. Recent papers involving predicting rainfall, temperature or other weather patterns have used time series decomposition techniques to isolate trend-cycle, seasonal, and remainder components [2]. A common method uses “Seasonal and Trend decomposition using LOESS” (STL) [3, 4]. Traditional forecasting models like autoregressive integrated moving average (ARIMA) have proven successful for modeling weather patterns [4,5]. More recently, machine learning approaches using neural networks are increasingly explored. RNNs [6], and even GNNs [7], offer the potential to model complex dependencies and noise in weather data.
 
 ## Proposed Approach and Tools:
 ### Tools:
