@@ -14,9 +14,19 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 getwd()
 ```
 
+```{r setup}
+remove.packages(c("ggplot2", "data.table"))
+install.packages('Rcpp', dependencies = TRUE)
+install.packages('ggplot2', dependencies = TRUE)
+install.packages('data.table', dependencies = TRUE)
+```
+
 ```{r 2.42 question}
 library(forecast)
-library(caret)
+
+library(fpp2)
+library(tseries)
+library(urca)
 
 # Read residual data from CSV file
 data <- read.csv('mean_temp.csv', header = TRUE)
@@ -24,41 +34,18 @@ data <- read.csv('mean_temp.csv', header = TRUE)
 # Convert date column to Date format
 data$Date <- as.Date(data$YYYYMMDD, format = "%Y-%m-%d")
 
-# Split data into training (70%), testing (30%) sets
-set.seed(123)  # for reproducibility
-trainIndex <- createDataPartition(data$MEAN_TEMP, p = 0.7, list = FALSE)
-trainData <- data[trainIndex, ]
-testData <- data[-trainIndex, ]
+# Calculate the number of rows for training and testing
+n_train <- round(0.8 * nrow(data))
+n_test <- nrow(data) - n_train
 
-# Create time series objects for training, validation, and testing sets
+# Split data into training and testing sets sequentially
+trainData <- data[1:n_train, ]
+testData <- data[(n_train + 1):nrow(data), ]
+
+# Create time series objects for training and testing sets
 train_ts <- ts(trainData$MEAN_TEMP, start = min(trainData$Date), frequency = 365)
 test_ts <- ts(testData$MEAN_TEMP, start = min(testData$Date), frequency = 365)
 
-# Fit SARIMA model using auto.arima on training data
-sarima_model <- auto.arima(train_ts)
-
-# Summary of the SARIMA model
-print(summary(sarima_model))
-
-# Plot ACF and PACF of SARIMA residuals
-acf(sarima_model$residuals)
-pacf(sarima_model$residuals)
-
-# Evaluate SARIMA model on validation data
-test_forecast <- forecast(sarima_model, h = length(testData$MEAN_TEMP))
-accuracy(test_forecast, testData$MEAN_TEMP)
-test_forecast$mean
-
-
-# Convert Date column to Date format
-testData$Date <- as.Date(testData$Date, format = "%Y-%m-%d")
-
-# Plot original test data
-plot(testData$Date, testData$MEAN_TEMP, type = "l", col = "blue", xlab = "Date", ylab = "Mean Temperature", main = "Original Test Data")
-
-# Plot forecast data
-plot(testData$Date, type = "l", col = "blue", xlab = "Date", ylab = "Mean Temperature", main = "Forecast Data")
-lines(test_forecast$mean, col = "red")
 
 ```
 
