@@ -16,7 +16,7 @@ plt.ylabel('Precipitation (inches)', fontsize=14)
 plt.grid(False)
 plt.xticks(rotation=45)
 plt.tight_layout()
-
+plt.show()
 plt.savefig("precipitation_plot.pdf")
 
 # Plotting Mean Temperature
