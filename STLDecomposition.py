@@ -27,8 +27,8 @@ res = stl.fit()
 mean_temp_trend = res.trend
 mean_temp_seasonal = res.seasonal
 mean_temp_residual = res.resid
-mean_temp.to_csv('mean_temp.csv', header=True)
-
+# mean_temp.to_csv('mean_temp.csv', header=True)
+precipitation.to_csv('precipitation.csv', header=True)
 # # Compute the autocorrelation function (ACF)
 # plot_acf(mean_temp_residual, lags=50)
 

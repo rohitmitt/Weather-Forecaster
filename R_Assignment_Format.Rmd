@@ -21,12 +21,9 @@ install.packages('ggplot2', dependencies = TRUE)
 install.packages('data.table', dependencies = TRUE)
 ```
 
-```{r 2.42 question}
+```{r mean temperature}
 library(forecast)
-
-library(fpp2)
 library(tseries)
-library(urca)
 
 # Read residual data from CSV file
 data <- read.csv('mean_temp.csv', header = TRUE)
@@ -42,10 +39,94 @@ n_test <- nrow(data) - n_train
 trainData <- data[1:n_train, ]
 testData <- data[(n_train + 1):nrow(data), ]
 
-# Create time series objects for training and testing sets
-train_ts <- ts(trainData$MEAN_TEMP, start = min(trainData$Date), frequency = 365)
-test_ts <- ts(testData$MEAN_TEMP, start = min(testData$Date), frequency = 365)
+# Create time series objects for entire data, training and testing sets
+train.ts <- ts(trainData$MEAN_TEMP, start = min(trainData$Date), frequency = 365)
+test.ts <- ts(testData$MEAN_TEMP, start = min(testData$Date), frequency = 365)
 
+# Decompose train dataset into components with STL 
+train.stl <- stl(train.ts, s.window="periodic")
+seasonal_component <- train.stl$time.series[, "seasonal"]
+trend_component <- train.stl$time.series[, "trend"]
+remainder_component <- train.stl$time.series[, "remainder"]
 
+train.res<- auto.arima(remainder_component)
+train.seas <- auto.arima(seasonal_component)
+train.trend <- auto.arima(trend_component)
+
+res_fcst <- forecast(train.res, h = n_test)  # Forecast the residuals
+seas_fcst <- forecast(train.seas, h = n_test) # Forecast the seasonal component
+trend_fcst <- forecast(train.trend, h = n_test)  # Forecast the trend component
+
+# Reconstruct the final forecast by summing the components
+final_fcst <- ts(res_fcst$mean + seas_fcst$mean + trend_fcst$mean)
+
+# Plotting
+plot(test.ts, main = "Original vs. Forecast", ylab = "Mean Temperature")
+lines(final_fcst, col = "red")
+# Add x-axis with dates
+axis.Date(side = 1, at = time(test.ts), labels = format(time(test.ts), "%Y-%m-%d"), cex.axis = 0.8)
+legend("topleft", legend = c("Actual", "Forecast"), col = c("black", "red"), lty = 1)
 ```
+```{r precipitation}
+library(forecast)
+library(tseries)
 
+# Read residual data from CSV file
+data <- read.csv('precipitation.csv', header = TRUE)
+
+# Convert date column to Date format
+data$Date <- as.Date(data$YYYYMMDD, format = "%Y-%m-%d")
+
+# Calculate the number of rows for training and testing
+n_train <- round(0.8 * nrow(data))
+n_test <- nrow(data) - n_train
+
+# Split data into training and testing sets sequentially
+trainData <- data[1:n_train, ]
+testData <- data[(n_train + 1):nrow(data), ]
+
+# Create time series objects for entire data, training and testing sets
+train.ts <- ts(trainData$PRECIPITATION, start = min(trainData$Date), frequency = 365)
+test.ts <- ts(testData$PRECIPITATION, start = min(testData$Date), frequency = 365)
+
+# Decompose train dataset into components with STL 
+train.stl <- stl(train.ts, s.window="periodic")
+seasonal_component <- train.stl$time.series[, "seasonal"]
+trend_component <- train.stl$time.series[, "trend"]
+remainder_component <- train.stl$time.series[, "remainder"]
+
+# auto_trend <- auto.arima(remainder_component)
+# summary(auto_trend)
+# # Hyperparameter tuning to find the best ARIMA model
+# best_res_aic <- Inf
+# best_res_model <- NULL
+# for (p in 0:6) {
+#   for (q in 0:6) {
+#     for (d in 0:2) {
+#       model <- Arima(remainder_component, order = c(p, d, q))
+#       aic <- AIC(model)
+#       if (aic < best_res_aic) {
+#         best_res_aic <- aic
+#         best_res_model <- model
+#       }
+#     }
+#   }
+# }
+
+train.res<- auto.arima(remainder_component)
+train.seas <- auto.arima(seasonal_component)
+train.trend <- auto.arima(trend_component)
+
+res_fcst <- forecast(train.res, h = n_test)  # Forecast the residuals
+seas_fcst <- forecast(train.seas, h = n_test) # Forecast the seasonal component
+trend_fcst <- forecast(train.trend, h = n_test)  # Forecast the trend component
+
+# Reconstruct the final forecast by summing the components
+dates <- seq(as.Date(start(test.ts)), by = 'day', length.out = n_test)
+final_fcst <- ts(res_fcst$mean + seas_fcst$mean + trend_fcst$mean)
+
+# Plotting
+plot(test.ts, main = "Original vs. Forecast", ylab = "Mean Temperature")
+lines(final_fcst, col = "red")
+legend("topleft", legend = c("Actual", "Forecast"), col = c("black", "red"), lty = 1)
+```
