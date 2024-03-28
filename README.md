@@ -2,9 +2,6 @@
 Repository for 'Weather Forecaster'. Analyzing 30+ years of Gainesville regional weather data to identify seasonal trends using STL and projecting forecasts with SARIMA.
 
 ## Project Title: A Statistical Approach to Weather Forecasting
-Team Information:
-Team Lead – Rohit Mittal – ID: 3945-8163
-Developer – Nolan Willett – ID: 3946-9097
 
 ## Problem Statement:
 Can a statistical model effectively use historical weather data to accurately forecast weather conditions? This project aims to develop a predictive model using historical weather data to forecast temperature and precipitation. An accurate forecast allows a variety of industries to make informed decisions, mitigate risks, and optimize operations.
